@@ -45,10 +45,39 @@
         name: ubuntu
         groups: docker
         append: yes
-    
-    - name: Apply group changes immediately
-      ansible.builtin.shell: newgrp docker
-      args:
-        executable: /bin/bash
-      become: yes
-      become_user: ubuntu
+
+    - name: Force SSH reconnection to apply Docker group changes
+      meta: reset_connection  # 🔹 SSH 세션을 다시 로드하여 그룹 변경 반영
+
+    - name: Change Docker socket permission (Avoid Permission Denied)
+      ansible.builtin.file:
+        path: /var/run/docker.sock
+        mode: '0666'
+
+    - name: Install latest Docker Compose
+      ansible.builtin.get_url:
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Ensure Docker Compose directory exists
+      ansible.builtin.file:
+        path: /home/ubuntu/docker-compose
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Copy Docker Compose file
+      ansible.builtin.copy:
+        src: "../docker-compose.yml"  # 🔹 플레이북과 파일 위치 확인 후 수정 필요!
+        dest: "/home/ubuntu/docker-compose/docker-compose.yml"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Start Docker Compose services as root (to avoid permission issues)
+      ansible.builtin.command:
+        cmd: docker-compose up -d
+        chdir: /home/ubuntu/docker-compose
+      become: true  # 🔹 root 권한으로 실행하여 접근 문제 방지
