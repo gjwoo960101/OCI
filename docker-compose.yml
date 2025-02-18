@@ -1,0 +1,34 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: side_project_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - my_network
+  
+  express_app:
+    #build: ../crud_express_sample  # Express 프로젝트 빌드 (express-app 폴더에서 Dockerfile 사용)
+    image: gjwoo96/sideproject-express-app:latest
+    container_name: express_app
+    restart: always
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mariadb
+    networks:
+      - my_network
+
+volumes:
+  mariadb_data:
+
+networks:
+  my_network:
+    driver: bridge
