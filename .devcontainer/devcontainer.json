@@ -14,9 +14,7 @@
 		"extensions": ["redhat.ansible"]
 	  }
 	},
-	"mounts": [
-	  "source=${localWorkspaceFolder}/ssh_keys,target=/root/.ssh,type=bind"
-	],
-	"postCreateCommand": "chmod 600 /root/.ssh/oci-main-instance.key"
+	"initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/command/initializeCommand.sh ${localWorkspaceFolder} ${containerWorkspaceFolder} ${localWorkspaceFolderBasename} ${containerWorkspaceFolderBasename} ${devcontainerId}",
+	"postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/command/postCreateCommand.sh"
 	
   }

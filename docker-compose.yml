@@ -3,21 +3,22 @@ services:
     image: mariadb:latest
     container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: side_project_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
       - my_network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
-      start_period: 20s
+    restart: always
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    #   interval: 10s
+    #   retries: 5
+    #   start_period: 20s
   
   express_app:
     #build: ../crud_express_sample  # Express 프로젝트 빌드 (express-app 폴더에서 Dockerfile 사용)
@@ -34,6 +35,7 @@ services:
 
 volumes:
   mariadb_data:
+    name: mariadb_data
 
 networks:
   my_network:
