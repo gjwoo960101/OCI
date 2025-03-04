@@ -1,5 +1,10 @@
-ENV_FILE=${PWD}/.devcontainer/.env
-source $ENV_FILE
+SCRIPT_DIR="$(dirname "$0")"       # 현재 스크립트가 위치한 디렉토리
+PARENT_DIR="$(dirname "$SCRIPT_DIR")"  # 스크립트의 상위 디렉토리
+
+ENV_FILE="$PARENT_DIR/.env"  # 한 단계 상위 폴더에 있는 .env 파일 지정
+source "$ENV_FILE"
+
+echo "📂 컨테이너 작업 폴더: $containerWorkspaceFolder"
 
 JSON_FILE="$containerWorkspaceFolder/config/mariadb.json"
 ENV_FILE="$containerWorkspaceFolder/.devcontainer/.env"
@@ -11,12 +16,14 @@ if [ -f "$JSON_FILE" ]; then
   # 구분선 추가
   echo -e "\n# Added from mariadb.json" >> "$ENV_FILE"
 
-  # sed를 사용하여 JSON을 .env 형식으로 변환 후 기존 .env 파일에 추가
+  # JSON을 .env 형식으로 변환 후 기존 .env 파일에 추가
   sed -e 's/[{}]//g' \
       -e 's/"//g' \
+      -e 's/,//g' \
       -e 's/\s*:\s*/=/g' \
       -e '/^\s*$/d' \
       -e 's/^[ \t]*//g' "$JSON_FILE" >> "$ENV_FILE"
+
 
   echo "✅ .env 파일이 업데이트되었습니다: $ENV_FILE"
 else

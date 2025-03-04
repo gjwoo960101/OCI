@@ -83,6 +83,22 @@
         group: ubuntu
         mode: '0644'
 
+    - name: Copy .env file
+      ansible.builtin.copy:
+        src: "../.devcontainer/.env"  # 🔹 플레이북과 파일 위치 확인 후 수정 필요!
+        dest: "/home/ubuntu/workSpace/side-project/.env"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Copy dockerFolder
+      ansible.builtin.copy:
+        src: "../docker/."  # 🔹 플레이북과 파일 위치 확인 후 수정 필요!
+        dest: "/home/ubuntu/workSpace/side-project/docker"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
     # - name: Clone Express.js project from Git
     #   ansible.builtin.git:
     #     repo: "https://{{ lookup('env', 'GITHUB_PAT') }}@github.com/gjwoo960101/crud_express_sample.git"  # ✅ Express 프로젝트 저장소
